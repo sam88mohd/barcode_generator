@@ -38,6 +38,7 @@ def create_barcode_image(end_number, serial_number):
     numbers = digits.search(serial_number).group(1)
     number_len = len(numbers)
     start_number = int(numbers)
+    RESULT_DIR.mkdir(exist_ok=True)
 
     for _ in range(start_number, start_number + end_number):
         y = serial_number[:-number_len] + str(start_number)
