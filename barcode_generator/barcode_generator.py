@@ -25,6 +25,9 @@ def wrapper(func):
             ws.write(f"A{i}", file.stem, cell_format)
             ws.insert_image(f"B{i}", file, {"x_scale": 0.5, "y_scale": 0.5})
         wb.close()
+
+        for file in RESULT_DIR.glob("*.png"):
+            file.unlink(missing_ok=True)
     return save_image_to_excel
 
 
@@ -41,6 +44,7 @@ def create_barcode_image(end_number, serial_number):
         my_code = Code128(y.upper(), writer=ImageWriter())
         my_code.save(RESULT_DIR / f"{y}", {'write_text': False})
         start_number += 1
+
 
 if __name__ == "__main__":
     create_barcode_image()
