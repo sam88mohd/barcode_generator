@@ -28,6 +28,7 @@ class App(tk.Tk):
     def __init__(self):
         super().__init__()
         menubar = MenuBar(self)
+        self.valid = False
         self.config(menu=menubar)
         self.title('Barcode Generator')
         self.create_widgets()
@@ -74,11 +75,16 @@ class App(tk.Tk):
         self.destroy()
 
     def create_barcode(self):
-        barcode_generator.create_barcode_image(
-            self.total_entry.get(), self.serial_entry.get())
-        self.total_entry.delete(0, tk.END)
-        self.serial_entry.delete(0, tk.END)
-        self.success_msg['text'] = "Done. Please check excel folder for the excel file."
+        if self.valid:
+            barcode_generator.create_barcode_image(
+                self.total_entry.get(), self.serial_entry.get())
+            self.total_entry.delete(0, tk.END)
+            self.serial_entry.delete(0, tk.END)
+            self.success_msg['text'] = "Done. Please check excel folder for the excel file."
+            self.success_msg['foreground'] = 'black'
+        else:
+            self.success_msg['text'] = "Invalid entry. Entry should not be blank."
+            self.success_msg['foreground'] = 'red'
         self.success_msg.grid(row=4, column=1, sticky=tk.W)
 
     def show_message(self, label_error, entry, error='', color='black'):
@@ -91,6 +97,8 @@ class App(tk.Tk):
         elif not value.isdecimal():
             return False
         self.show_message(self.total_error, self.total_entry)
+        self.valid = True
+        self.success_msg['text'] = ''
         return True
 
     def total_entry_on_invalid(self):
@@ -102,7 +110,9 @@ class App(tk.Tk):
             return False
         elif not value[-1].isdecimal():
             return False
+        self.valid = True
         self.show_message(self.serial_error, self.serial_entry)
+        self.success_msg['text'] = ''
         return True
 
     def serial_entry_on_invalid(self):
