@@ -16,6 +16,18 @@ class MenuBar(tk.Menu):
         filemenu.add_command(label='Exit', underline=1, command=self.quit)
         self.add_cascade(label="File", underline=0, menu=filemenu)
 
+        helpmenu = tk.Menu(self, tearoff=0)
+        helpmenu.add_command(label="Credit", underline=1, command=self.showMsg)
+        self.add_cascade(label="Help", underline=0, menu=helpmenu)
+
+    def showMsg(self):
+        win = tk.Toplevel()
+        win.geometry("300x100")
+        win.title("About")
+        tk.Label(win, text="Author: Samsudin Mohamad").pack()
+        tk.Label(win, text="Barcode Generator Ver 1.2").pack()
+        tk.Button(win, text="OK", command=win.destroy).pack(padx=10, pady=10)
+
     def quit(self):
         sys.exit()
 
