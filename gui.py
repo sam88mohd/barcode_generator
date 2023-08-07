@@ -1,12 +1,33 @@
 from tkinter import ttk
-import tkinter as tk
 from barcode_generator import barcode_generator
+from pathlib import Path
+import tkinter as tk
+import subprocess
+import sys
+
+
+class MenuBar(tk.Menu):
+    def __init__(self, parent):
+        tk.Menu.__init__(self, parent)
+        filemenu = tk.Menu(self, tearoff=0)
+        self.add_cascade(label="File", underline=0, menu=filemenu)
+        filemenu.add_command(label="Open excel folder",
+                             command=self.open_folder)
+        filemenu.add_command(label='Exit', underline=1, command=self.quit)
+
+    def quit(self):
+        sys.exit()
+
+    def open_folder(self):
+        excel_folder = Path('excel/')
+        subprocess.Popen(f'explorer {excel_folder}')
 
 
 class App(tk.Tk):
     def __init__(self):
         super().__init__()
-
+        menubar = MenuBar(self)
+        self.config(menu=menubar)
         self.title('Barcode Generator')
         self.create_widgets()
 
@@ -43,9 +64,6 @@ class App(tk.Tk):
         self.submit_btn = ttk.Button(
             text='Save to Excel', command=lambda: self.create_barcode())
         self.submit_btn.grid(row=4, column=0, padx=5)
-
-        self.exit_btn = ttk.Button(text='Exit', command=lambda: self.close()).grid(
-            row=4, column=3, padx=5)
 
         self.success_msg = ttk.Label(text='')
 
