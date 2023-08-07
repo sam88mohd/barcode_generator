@@ -10,10 +10,11 @@ class MenuBar(tk.Menu):
     def __init__(self, parent):
         tk.Menu.__init__(self, parent)
         filemenu = tk.Menu(self, tearoff=0)
-        self.add_cascade(label="File", underline=0, menu=filemenu)
         filemenu.add_command(label="Open excel folder",
                              command=self.open_folder)
+        filemenu.add_separator()
         filemenu.add_command(label='Exit', underline=1, command=self.quit)
+        self.add_cascade(label="File", underline=0, menu=filemenu)
 
     def quit(self):
         sys.exit()
@@ -36,8 +37,10 @@ class App(tk.Tk):
         self.columnconfigure(1, weight=1)
         self.columnconfigure(2, weight=1)
 
-        ttk.Label(text='How many: ').grid(row=0, column=0, padx=5, pady=5)
-        ttk.Label(text='Serial Number: ').grid(row=2, column=0, padx=5, pady=5)
+        ttk.Label(text='How many:', justify=tk.LEFT, anchor=tk.W, width=15).grid(
+            row=0, column=0, padx=5, pady=5)
+        ttk.Label(text='Serial Number:', justify=tk.LEFT, anchor=tk.W,
+                  width=15).grid(row=2, column=0, padx=5, pady=5)
 
         total_vcmd = (self.register(self.total_entry_validate), '%P')
         total_ivcmd = (self.register(self.total_entry_on_invalid),)
@@ -46,24 +49,24 @@ class App(tk.Tk):
         serial_ivcmd = (self.register(self.serial_entry_on_invalid),)
 
         self.total_entry = ttk.Entry(self, width=50)
-        self.total_entry.config(validate='focus',
+        self.total_entry.config(validate='focusout',
                                 validatecommand=total_vcmd, invalidcommand=total_ivcmd)
-        self.total_entry.grid(row=0, column=1)
+        self.total_entry.grid(row=0, column=1, padx=10)
 
         self.serial_entry = ttk.Entry(self, width=50)
         self.serial_entry.config(
-            validate='focus', validatecommand=serial_vcmd, invalidcommand=serial_ivcmd)
+            validate='focusout', validatecommand=serial_vcmd, invalidcommand=serial_ivcmd)
         self.serial_entry.grid(row=2, column=1)
 
         self.total_error = ttk.Label(self, foreground='red')
-        self.total_error.grid(row=1, column=1, sticky=tk.W)
+        self.total_error.grid(row=1, column=1, sticky=tk.W, padx=10)
 
         self.serial_error = ttk.Label(self, foreground='red')
-        self.serial_error.grid(row=3, column=1, sticky=tk.W)
+        self.serial_error.grid(row=3, column=1, sticky=tk.W, padx=10)
 
         self.submit_btn = ttk.Button(
             text='Save to Excel', command=lambda: self.create_barcode())
-        self.submit_btn.grid(row=4, column=0, padx=5)
+        self.submit_btn.grid(row=4, column=0, padx=10, pady=10)
 
         self.success_msg = ttk.Label(text='')
 
@@ -83,7 +86,9 @@ class App(tk.Tk):
         entry['foreground'] = color
 
     def total_entry_validate(self, value):
-        if value == '' and not value.isdecimal():
+        if value == '':
+            return False
+        elif not value.isdecimal():
             return False
         self.show_message(self.total_error, self.total_entry)
         return True
@@ -93,7 +98,9 @@ class App(tk.Tk):
                           'Should contain only numbers.', 'red')
 
     def serial_entry_validate(self, value):
-        if value == '' and not value[-1].isdecimal():
+        if value == '':
+            return False
+        elif not value[-1].isdecimal():
             return False
         self.show_message(self.serial_error, self.serial_entry)
         return True
