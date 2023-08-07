@@ -32,7 +32,7 @@ class MenuBar(tk.Menu):
         sys.exit()
 
     def open_folder(self):
-        excel_folder = Path('excel/')
+        excel_folder = Path.cwd() / 'excel/'
         subprocess.Popen(f'explorer {excel_folder}')
 
 
