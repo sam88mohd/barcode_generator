@@ -5,6 +5,9 @@ import tkinter as tk
 import subprocess
 import sys
 
+RESULT_DIR = Path('results')
+EXCEL_DIR = RESULT_DIR.parent / "excel"
+
 
 class MenuBar(tk.Menu):
     def __init__(self, parent):
@@ -32,6 +35,7 @@ class MenuBar(tk.Menu):
         sys.exit()
 
     def open_folder(self):
+        EXCEL_DIR.mkdir(exist_ok=True)
         excel_folder = Path.cwd() / 'excel/'
         subprocess.Popen(f'explorer {excel_folder}')
 
@@ -80,13 +84,11 @@ class App(tk.Tk):
         self.submit_btn = ttk.Button(
             text='Save to Excel', command=lambda: self.create_barcode())
         self.submit_btn.grid(row=4, column=0, padx=10, pady=10)
-
+        
         self.success_msg = ttk.Label(text='')
 
-    def close(self):
-        self.destroy()
-
     def create_barcode(self):
+        RESULT_DIR.mkdir(exist_ok=True)
         if self.valid:
             barcode_generator.create_barcode_image(
                 self.total_entry.get(), self.serial_entry.get())
